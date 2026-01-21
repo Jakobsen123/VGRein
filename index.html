@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VG Admin Panel</title>
+    <link rel="icon" href="https://play-lh.googleusercontent.com/OeSlXldhX29qqJCrmmkk8U-V_2TI4_9_Ub2hK5PJg6aBO8-s_spa_xJbw40iS_oSGn4">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f4f4;
+        }
+
+        /* Toppbar (VG-stil) */
+        header {
+            background: #e60000;
+            color: white;
+            padding: 16px 24px;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Sentral container */
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 24px;
+            border-radius: 6px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            margin-top: 0;
+            border-bottom: 2px solid #e60000;
+            padding-bottom: 8px;
+        }
+
+        label {
+            display: block;
+            margin-top: 16px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #e60000;
+        }
+
+        button {
+            margin-top: 24px;
+            width: 100%;
+            padding: 14px;
+            background: #e60000;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #c80000;
+        }
+
+        footer {
+            text-align: center;
+            color: #777;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>VG</header>
+
+<div class="container">
+    <h2>Publiser nyhet</h2>
+
+    <form id="form">
+        <label for="tittel">Tittel</label>
+        <input type="text" id="tittel" placeholder="Skriv overskrift">
+
+        <label for="innhold">Innhold</label>
+        <input id="innhold" placeholder="Kort ingress eller tekst">
+
+        <label for="bildelenke">Bilde-lenke</label>
+        <input id="bildelenke" placeholder="https://...">
+
+        <button type="submit">Publiser</button>
+    </form>
+
+    <footer>
+        © VG Nyheter
+    </footer>
+</div>
+
+<script>
+    const form = document.getElementById("form")
+
+    async function sendData(data) {
+        await fetch("https://reinvikavgbackend.jakobkyrkjebo.workers.dev/api/postToDiscord ", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        console.log("success")
+    }
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault()
+
+        const data = {
+            username: "VG Nyheter",
+            avatar_url: "https://play-lh.googleusercontent.com/OeSlXldhX29qqJCrmmkk8U-V_2TI4_9_Ub2hK5PJg6aBO8-s_spa_xJbw40iS_oSGn4",
+            "allowed_mentions": { parse: []},
+            content: "**Nytt innlegg fra VG:**",
+            embeds: [
+                {
+                    title: document.getElementById("tittel").value,
+                    description: document.getElementById("innhold").value,
+                    image: { url: document.getElementById("bildelenke").value },
+                    color: 11344153,
+                    footer: { text: "VG Nyheter" },
+                    timestamp: new Date().toISOString()
+                }
+            ]
+        }
+
+        await sendData(data)
+        form.reset()
+    })
+</script>
+
+</body>
+</html>
