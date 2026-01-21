@@ -98,10 +98,10 @@
 
     <form id="form">
         <label for="tittel">Tittel</label>
-        <input type="text" id="tittel" placeholder="Skriv overskrift">
+        <input required="true" type="text" id="tittel" placeholder="Skriv overskrift">
 
         <label for="innhold">Innhold</label>
-        <input id="innhold" placeholder="Kort ingress eller tekst">
+        <input required="true" id="innhold" placeholder="Kort ingress eller tekst">
 
         <label for="bildelenke">Bilde-lenke</label>
         <input id="bildelenke" placeholder="https://...">
@@ -128,7 +128,10 @@
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault()
-
+        let img = document.getElementById("bildelenke").value
+        if (!img) {
+            img = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/VG_logo.svg/1280px-VG_logo.svg.png"
+        }
         const data = {
             username: "VG Nyheter",
             avatar_url: "https://play-lh.googleusercontent.com/OeSlXldhX29qqJCrmmkk8U-V_2TI4_9_Ub2hK5PJg6aBO8-s_spa_xJbw40iS_oSGn4",
@@ -138,7 +141,7 @@
                 {
                     title: document.getElementById("tittel").value,
                     description: document.getElementById("innhold").value,
-                    image: { url: document.getElementById("bildelenke").value },
+                    image: { url: img },
                     color: 11344153,
                     footer: { text: "VG Nyheter" },
                     timestamp: new Date().toISOString()
